@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  postgresdb:
+    image: postgres
+    volumes:
+      - elixir_twitter_postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: "admin"
+    ports:
+      - "5432:5432"
+
+volumes:
+  elixir_twitter_postgres:
+    driver: local
