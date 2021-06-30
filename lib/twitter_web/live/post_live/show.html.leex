@@ -6,7 +6,7 @@
     title: @page_title,
     action: @live_action,
     post: @post,
-    return_to: Routes.post_show_path(@socket, :show, @post) %>
+    return_to: Routes.home_show_path(@socket, :show, @post) %>
 <% end %>
 
 <ul>
@@ -33,5 +33,5 @@
 
 </ul>
 
-<span><%= live_patch "Edit", to: Routes.post_show_path(@socket, :edit, @post), class: "button" %></span>
-<span><%= live_redirect "Back", to: Routes.post_index_path(@socket, :index) %></span>
+<span><%= live_patch "Edit", to: Routes.home_show_path(@socket, :edit, @post), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.home_index_path(@socket, :index) %></span>

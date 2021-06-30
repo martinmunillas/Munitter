@@ -1,4 +1,4 @@
-defmodule TwitterWeb.PostLive.Index do
+defmodule TwitterWeb.HomeLive.Index do
   use TwitterWeb, :live_view
 
   alias Twitter.Timeline
@@ -51,7 +51,8 @@ defmodule TwitterWeb.PostLive.Index do
     {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
   end
 
-  defp list_posts do
+  def list_posts do
     Timeline.list_posts()
   end
+
 end

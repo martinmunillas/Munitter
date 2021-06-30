@@ -1,4 +1,4 @@
-defmodule TwitterWeb.PostLive.Show do
+defmodule TwitterWeb.HomeLive.Show do
   use TwitterWeb, :live_view
 
   alias Twitter.Timeline

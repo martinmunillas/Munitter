@@ -27,7 +27,7 @@ defmodule TwitterWeb.PostLive.PostComponent do
           </a>
         </div>
         <div class="column post-button-column">
-          <%= live_patch to: Routes.post_index_path(@socket, :edit, @post.id) do %>
+          <%= live_patch to: Routes.home_index_path(@socket, :edit, @post.id) do %>
             <i class="fa fa-edit"></i>
           <% end %>
           <%= link to: "#", phx_click: "delete", phx_value_id: @post.id do %>
