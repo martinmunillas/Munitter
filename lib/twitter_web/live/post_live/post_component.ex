@@ -4,29 +4,34 @@ defmodule TwitterWeb.PostLive.PostComponent do
   def render(assigns) do
     ~L"""
     <div id="post-<%= @post.id %>" class="post">
-      <div class="row">
-        <div class="column column-10">
-          <div class="post-avatar"></div>
+      <div class="top_tweet">
+        <div class="avatar_container">
+          <img class="avatar" src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/loki-poster-fotogramas-1617632148.jpg?crop=1.00xw:0.338xh;0,0.253xh&resize=1200:*" alt="<%= @post.username %>" />
         </div>
         <div class="column column-90 post-body">
           <b>@<%= @post.username %></b>
           <br/>
           <%= @post.body %>
+          <%= if @post.edited do %>
+            <i>(edited)</i>
+          <% end %>
         </div>
       </div>
 
-      <div class="row">
-        <div class="column post-button-column">
-          <a href="#" phx-click="like" phx-target="<%= @myself %>">
-            <i class="far fa-heart"></i> <%= @post.like_count %>
-          </a>
+      <div class="buttons">
+        <div class="options">
+          <div class="option">
+            <a href="#" phx-click="like" phx-target="<%= @myself %>">
+              <i class="far fa-heart"></i> <%= @post.like_count %>
+            </a>
+          </div>
+          <div class="option">
+            <a href="#" phx-click="retweet" phx-target="<%= @myself %>">
+              <i class="fa fa-retweet"></i> <%= @post.retweet_count %>
+            </a>
+          </div>
         </div>
-        <div class="column post-button-column">
-          <a href="#" phx-click="retweet" phx-target="<%= @myself %>">
-            <i class="fa fa-retweet"></i> <%= @post.retweet_count %>
-          </a>
-        </div>
-        <div class="column post-button-column">
+        <div class="edits_post">
           <%= live_patch to: Routes.home_index_path(@socket, :edit, @post.id) do %>
             <i class="fa fa-edit"></i>
           <% end %>

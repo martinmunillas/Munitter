@@ -1,12 +1,24 @@
-<h1>Tweets</h1>
-
-<%= if @live_action in [:new, :edit] do %>
+<%= if @live_action in [:edit] do %>
   <%= live_modal @socket, TwitterWeb.PostLive.FormComponent,
-    id: @post.id || :new,
+    id: @post.id,
     title: @page_title,
     action: @live_action,
     post: @post,
     return_to: Routes.home_index_path(@socket, :index) %>
+<% end %>
+
+<div class="new_tweet">
+  <div class="new_tweet-top">
+    <div class="avatar_container">
+      <img class="avatar" src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/loki-poster-fotogramas-1617632148.jpg?crop=1.00xw:0.338xh;0,0.253xh&resize=1200:*" alt="Loki" />
+    </div>
+    <textarea placeholder="What's happening?" ></textarea>
+  </div>
+    <button>Tweet</button>
+</div>
+
+<%= if @should_refresh do %>
+  <button phx-click="refresh">Refresh</button>
 <% end %>
 
 <div id="posts" phx-update="prepend">

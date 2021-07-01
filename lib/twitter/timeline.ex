@@ -18,7 +18,7 @@ defmodule Twitter.Timeline do
 
   """
   def list_posts do
-    Repo.all(from p in Post, order_by: [desc: p.id])
+      Repo.all(from p in Post, order_by: [desc: p.id])
   end
 
   def inc_likes(%Post{id: id}) do
@@ -85,6 +85,7 @@ defmodule Twitter.Timeline do
   def update_post(%Post{} = post, attrs) do
     post
     |> Post.changeset(attrs)
+    |> Post.changeset( %{"edited" => true})
     |> Repo.update()
     |> broadcast(:post_updated)
   end
@@ -103,6 +104,7 @@ defmodule Twitter.Timeline do
   """
   def delete_post(%Post{} = post) do
     Repo.delete(post)
+    |> broadcast(:post_deleted)
   end
 
   @doc """
