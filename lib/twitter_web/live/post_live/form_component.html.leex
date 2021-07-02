@@ -1,14 +1,20 @@
-<h2><%= @title %></h2>
-
 <%= f = form_for @changeset, "#",
-  id: "post-form",
+  id: @id,
   phx_target: @myself,
   phx_change: "validate",
-  phx_submit: "save" %>
+  phx_submit: "save",
+  class: "tweet_form"
+  %>
 
-  <%= textarea f, :body %>
+  <%= if @title do %>
+    <h2><%= @title %></h2>
+  <% end %>
+  <div class="tweet_form-top">
+    <div class="avatar_container">
+      <img class="avatar" src="<%= @current_user.image %>" alt="Loki" />
+    </div>
+  <%= textarea f, :body, placeholder: "What's happening?" %>
+  </div>
   <%= error_tag f, :body %>
-
-
-  <%= submit "Post", phx_disable_with: "Posting..." %>
+  <%= submit "Tweet", phx_disable_with: "Tweeting..." %>
 </form>

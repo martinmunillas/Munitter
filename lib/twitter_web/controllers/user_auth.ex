@@ -36,6 +36,19 @@ defmodule TwitterWeb.UserAuth do
     |> redirect(to: user_return_to || signed_in_path(conn))
   end
 
+  def get_user_from_session(session) do
+    user_token = case session do
+      %{"user_token" => user_token} -> user_token
+      %{} -> nil
+    end
+    if user_token do
+      Accounts.get_user_by_session_token(user_token)
+    else
+      nil
+    end
+  end
+
+
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
     put_resp_cookie(conn, @remember_me_cookie, token, @remember_me_options)
   end

@@ -5,6 +5,8 @@ defmodule Twitter.Accounts.User do
   @derive {Inspect, except: [:password]}
   schema "users" do
     field :email, :string
+    field :name, :string
+    field :image, :string
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
@@ -31,7 +33,7 @@ defmodule Twitter.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :name, :image])
     |> validate_email()
     |> validate_password(opts)
   end
@@ -84,15 +86,6 @@ defmodule Twitter.Accounts.User do
 
   @doc """
   A user changeset for changing the password.
-
-  ## Options
-
-    * `:hash_password` - Hashes the password so it can be stored securely
-      in the database and ensures the password field is cleared to prevent
-      leaks in the logs. If password hashing is not needed and clearing the
-      password field is not desired (like when using this changeset for
-      validations on a LiveView form), this option can be set to `false`.
-      Defaults to `true`.
   """
   def password_changeset(user, attrs, opts \\ []) do
     user

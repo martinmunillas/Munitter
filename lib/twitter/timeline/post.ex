@@ -6,7 +6,7 @@ defmodule Twitter.Timeline.Post do
     field :body, :string
     field :like_count, :integer, default: 0
     field :retweet_count, :integer, default: 0
-    field :username, :string, default: "MartinMunilla"
+    field :user_id, :integer
     field :edited, :boolean, default: false
 
     timestamps()
@@ -23,8 +23,8 @@ defmodule Twitter.Timeline.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:body, :edited])
-    |> validate_required([:body])
-    |> validate_length(:body, min: 2, max: 150)
+    |> cast(attrs, [:body, :edited, :user_id])
+    |> validate_required([:body, :user_id])
+    |> validate_length(:body, min: 2, max: 250)
   end
 end

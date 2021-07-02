@@ -1,17 +1,21 @@
 defmodule TwitterWeb.HomeLive.Index do
   use TwitterWeb, :live_view
 
+  alias TwitterWeb.UserAuth
   alias Twitter.Timeline
   alias Twitter.Timeline.Post
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: Timeline.subscribe()
+    current_user = UserAuth.get_user_from_session(session)
+
     {:ok,
     socket
-    # |> TwitterWeb.UserAuth.fetch_current_user(%{})
     |> assign(:posts, list_posts())
-    |> assign(:should_refresh, false),
+    |> assign(:should_refresh, false)
+    |> assign(:post, %Post{})
+    |> assign(:current_user, current_user),
     temporary_assigns: [posts: []]
     }
   end
@@ -27,16 +31,9 @@ defmodule TwitterWeb.HomeLive.Index do
     |> assign(:post, Timeline.get_post!(id))
   end
 
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Tweet")
-    |> assign(:post, %Post{})
-  end
-
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Feed")
-    |> assign(:post, nil)
+    |> assign(:page_title, "Home")
   end
 
   @impl true
@@ -50,13 +47,17 @@ defmodule TwitterWeb.HomeLive.Index do
 
   def handle_event("refresh", _, socket) do
     {:noreply, socket
-               |> assign(:should_refresh, false)
-               |> assign(:posts, list_posts())}
+                |> update(:should_refresh, fn _ -> false end)
+                |> update(:posts, fn _ -> list_posts() end)}
   end
 
   @impl true
-  def handle_info({:post_created, _post}, socket) do
-    {:noreply, assign(socket, :should_refresh, true)}
+  def handle_info({:post_created, post}, socket) do
+    if !socket.assigns.current_user || !Map.has_key?(socket.assigns.current_user, :id) || post.uid != socket.assigns.current_user.id do
+      {:noreply, assign(socket, :should_refresh, true)}
+    else
+      {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
+    end
   end
 
   @impl true

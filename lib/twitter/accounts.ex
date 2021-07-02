@@ -74,6 +74,7 @@ defmodule Twitter.Accounts do
 
   """
   def register_user(attrs) do
+    IO.inspect(attrs)
     %User{}
     |> User.registration_changeset(attrs)
     |> Repo.insert()

@@ -4,18 +4,22 @@
     title: @page_title,
     action: @live_action,
     post: @post,
-    return_to: Routes.home_index_path(@socket, :index) %>
+    return_to: Routes.home_index_path(@socket, :index),
+    current_user: @current_user
+    %>
 <% end %>
 
-<div class="new_tweet">
-  <div class="new_tweet-top">
-    <div class="avatar_container">
-      <img class="avatar" src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/loki-poster-fotogramas-1617632148.jpg?crop=1.00xw:0.338xh;0,0.253xh&resize=1200:*" alt="Loki" />
-    </div>
-    <textarea placeholder="What's happening?" ></textarea>
+<%= if @current_user do %>
+  <div class="new_tweet">
+    <%= live_component @socket, TwitterWeb.PostLive.FormComponent,
+        id: "new-tweet",
+        title: false,
+        action: :new,
+        post: @post,
+        current_user: @current_user
+    %>
   </div>
-    <button>Tweet</button>
-</div>
+<% end %>
 
 <%= if @should_refresh do %>
   <button phx-click="refresh">Refresh</button>
@@ -23,8 +27,6 @@
 
 <div id="posts" phx-update="prepend">
   <%= for post <- @posts do %>
-    <%= live_component @socket, TwitterWeb.PostLive.PostComponent, id: post.id, post: post %>
+    <%= live_component @socket, TwitterWeb.PostLive.PostComponent, id: post.id, post: post, current_user: @current_user %>
   <% end %>
 </div>
-
-<span><%= live_patch "New Post", to: Routes.home_index_path(@socket, :new) %></span>

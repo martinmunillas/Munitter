@@ -10,21 +10,20 @@
     <script defer phx-track-static type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav role="navigation">
-          <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
-            <% end %>
-          </ul>
-          <%= render "_user_menu.html", assigns %>
-        </nav>
-        <a href="/">
-          <h1>Twitter</h1>
-        </a>
-      </section>
-    </header>
-    <%= @inner_content %>
+    <div class="main_layout">
+      <aside class="aside">
+          <nav role="navigation">
+            <a href="/">
+              <h1 class="logo">Twitter</h1>
+            </a>
+            <ul>
+              <%= render "_user_menu.html", assigns %>
+            </ul>
+          </nav>
+      </aside>
+      <main>
+        <%= @inner_content %>
+      </main>
+    </div>
   </body>
 </html>

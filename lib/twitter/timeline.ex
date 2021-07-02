@@ -7,6 +7,7 @@ defmodule Twitter.Timeline do
   alias Twitter.Repo
 
   alias Twitter.Timeline.Post
+  alias Twitter.Accounts.User
 
   @doc """
   Returns the list of posts.
@@ -18,19 +19,53 @@ defmodule Twitter.Timeline do
 
   """
   def list_posts do
-      Repo.all(from p in Post, order_by: [desc: p.id])
+    query = from p in Post, join: u in User, as: :user, on: p.user_id == u.id, order_by: [desc: p.id]
+    query = from [p, u] in query,
+                select: %{
+                  id: p.id,
+                  body: p.body,
+                  edited: p.edited,
+                  like_count: p.like_count,
+                  retweet_count: p.retweet_count,
+                  username: u.name,
+                  uid: u.id,
+                  img: u.image
+                }
+    Repo.all(query)
   end
 
-  def inc_likes(%Post{id: id}) do
-    {1, [post]} = from(p in Post, where: p.id == ^id, select: p)
+  def get_post_with_user(id) do
+    query = from p in Post, where: p.id == ^id, join: u in User, as: :user, on: p.user_id == u.id, order_by: [desc: p.id]
+    query = from [p, u] in query,
+                select: %{
+                  id: p.id,
+                  body: p.body,
+                  edited: p.edited,
+                  like_count: p.like_count,
+                  retweet_count: p.retweet_count,
+                  username: u.name,
+                  uid: u.id,
+                  img: u.image
+                }
+
+    [post] = Repo.all(query)
+    post
+  end
+
+  def inc_likes(id) do
+    {1, nil} = from(p in Post, where: p.id == ^id)
     |> Repo.update_all(inc: [like_count: 1])
 
+    post = get_post_with_user(id)
+    IO.inspect(post)
     broadcast({:ok, post}, :post_updated)
   end
 
-  def inc_retweets(%Post{id: id}) do
-    {1, [post]} = from(p in Post, where: p.id == ^id, select: p)
+  def inc_retweets(id) do
+    {1, nil} = from(p in Post, where: p.id == ^id)
     |> Repo.update_all(inc: [retweet_count: 1])
+
+    post = get_post_with_user(id)
 
     broadcast({:ok, post}, :post_updated)
   end
@@ -64,10 +99,12 @@ defmodule Twitter.Timeline do
 
   """
   def create_post(attrs \\ %{}) do
-    %Post{}
+    {:ok, post} = %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
-    |> broadcast(:post_created)
+
+
+    broadcast({:ok, get_post_with_user(post.id)}, :post_created)
   end
 
   @doc """
@@ -75,19 +112,21 @@ defmodule Twitter.Timeline do
 
   ## Examples
 
-      iex> update_post(post, %{field: new_value})
-      {:ok, %Post{}}
+  iex> update_post(post, %{field: new_value})
+  {:ok, %Post{}}
 
-      iex> update_post(post, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+  iex> update_post(post, %{field: bad_value})
+  {:error, %Ecto.Changeset{}}
 
   """
   def update_post(%Post{} = post, attrs) do
-    post
+    {:ok, post} = post
     |> Post.changeset(attrs)
     |> Post.changeset( %{"edited" => true})
     |> Repo.update()
-    |> broadcast(:post_updated)
+
+
+    broadcast({:ok, get_post_with_user(post.id)}, :post_created)
   end
 
   @doc """

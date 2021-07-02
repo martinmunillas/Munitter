@@ -24,7 +24,7 @@ defmodule TwitterWeb.PostLive.FormComponent do
   end
 
   def handle_event("save", %{"post" => post_params}, socket) do
-    save_post(socket, socket.assigns.action, post_params)
+    save_post(socket, socket.assigns.action, Map.merge(post_params, %{"user_id" => socket.assigns.current_user.id}))
   end
 
   defp save_post(socket, :edit, post_params) do
@@ -45,8 +45,7 @@ defmodule TwitterWeb.PostLive.FormComponent do
       {:ok, _post} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Post created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> put_flash(:info, "Post created successfully")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}

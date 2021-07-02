@@ -1,13 +1,22 @@
 /* Fontawesome 5 config */
 
 $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+$blue: #208bd8;
+$blue_light: #e8f3fb;
+$red: #d61414;
+$red_light: #ecc6c6;
+$green: #11ca11;
+$green_light: #e3ffe3;
+$gray: #e6e6e6;
+$gray_dark: #3b3b3b;
+$shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
 
 .post {
   margin-block: 20px;
   padding: 10px 20px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid $gray;
   border-radius: 7px;
-  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow;
 }
 
 .options {
@@ -18,6 +27,10 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 .edits_post {
   display: flex;
   align-items: center;
+  column-gap: 10px;
+  a {
+    font-size: 20px;
+  }
 }
 
 .buttons {
@@ -27,8 +40,31 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
   padding-inline-start: 20%;
 }
 
-.option {
+.option_container {
   margin-inline-end: 10px;
+}
+
+.option {
+  color: #606c76;
+  transition: color 200ms ease-in-out;
+  i {
+    transition: background-color 200ms ease-in-out;
+    padding: 10px;
+    border-radius: 100%;
+  }
+}
+.like:hover {
+  color: $red;
+
+  & > i {
+    background-color: $red_light;
+  }
+}
+.retweet:hover {
+  color: $green;
+  & > i {
+    background-color: $green_light;
+  }
 }
 
 .top_tweet {
@@ -51,14 +87,21 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 }
 
 .new_tweet {
-  margin-block: 20px;
-  padding: 10px 20px;
   border: 1px solid #e6e6e6;
   border-radius: 7px;
-  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow;
+}
+
+.tweet_form {
+  margin-block-end: 20px;
+  padding: 10px 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+
+  h2 {
+    align-self: flex-start;
+  }
 
   &-top {
     display: flex;
@@ -75,4 +118,71 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
   button {
     border-radius: 100px;
   }
+}
+
+.main_layout {
+  padding: 10px 10%;
+  display: grid;
+  grid-template-columns: 1.5fr 4fr 1fr;
+  column-gap: 2rem;
+
+  .aside {
+    padding: 2em;
+    width: 100%;
+    height: fit-content;
+    border: 1px solid $gray;
+    border-radius: 7px;
+    box-shadow: $shadow;
+
+    nav {
+      .logo {
+        font-weight: 700;
+        margin-inline-start: 15px;
+      }
+      ul {
+        list-style: none;
+        a {
+          color: $gray_dark;
+          font-weight: 700;
+          padding: 10px 20px;
+          border-radius: 50px;
+
+          &:hover {
+            background-color: $blue_light;
+            color: $blue;
+          }
+        }
+      }
+    }
+  }
+}
+
+.tweet_modal {
+  background-color: white;
+  margin: 15%;
+  box-shadow: $shadow;
+  border-radius: 7px;
+  position: relative;
+}
+
+a {
+  color: $blue;
+}
+button {
+  border-radius: 100px;
+  border: none;
+  background-color: $blue;
+  box-shadow: $shadow;
+}
+
+.tweet_modal-close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 2em;
+  line-height: 0.8em;
+}
+
+.edited {
+  color: gray;
 }
