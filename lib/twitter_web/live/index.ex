@@ -12,11 +12,14 @@ defmodule TwitterWeb.HomeLive.Index do
 
     {:ok,
     socket
-    |> assign(:posts, list_posts())
-    |> assign(:should_refresh, false)
-    |> assign(:post, %Post{})
-    |> assign(:current_user, current_user),
-    temporary_assigns: [posts: []]
+    |> assign(
+      posts: list_posts(),
+      should_refresh: false,
+      post: %Post{},
+      editable_post: nil,
+      current_user: current_user,
+      removed_tweets: []
+    )
     }
   end
 
@@ -27,8 +30,10 @@ defmodule TwitterWeb.HomeLive.Index do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Tweet")
-    |> assign(:post, Timeline.get_post!(id))
+    |> assign(
+      page_title: "Edit Tweet",
+      editable_post: Timeline.get_post!(id)
+    )
   end
 
   defp apply_action(socket, :index, _params) do
@@ -47,27 +52,38 @@ defmodule TwitterWeb.HomeLive.Index do
 
   def handle_event("refresh", _, socket) do
     {:noreply, socket
-                |> update(:should_refresh, fn _ -> false end)
-                |> update(:posts, fn _ -> list_posts() end)}
+                |> assign(
+                  should_refresh: false,
+                  posts: list_posts()
+                )}
   end
 
   @impl true
   def handle_info({:post_created, post}, socket) do
     if !socket.assigns.current_user || !Map.has_key?(socket.assigns.current_user, :id) || post.uid != socket.assigns.current_user.id do
-      {:noreply, assign(socket, :should_refresh, true)}
+      {:noreply, assign(socket, should_refresh: true)}
     else
-      {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
+      posts = socket.assigns.posts
+      {:noreply, assign(socket,
+                  posts: [post | posts])
+      }
     end
   end
 
   @impl true
   def handle_info({:post_updated, post}, socket) do
-    {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
+    posts = Enum.map(socket.assigns.posts, fn opost -> if opost.id == post.id do post else opost end end)
+    {:noreply, assign(socket, posts: posts)}
   end
 
   @impl true
-  def handle_info({:post_deleted, _post}, socket) do
-    {:noreply, assign(socket, :should_refresh, true)}
+  def handle_info({:post_deleted, post}, socket) do
+    if socket.assigns.current_user && Map.has_key?(socket.assigns.current_user, :id) && post.uid == socket.assigns.current_user.id do
+      {:noreply, assign(socket, posts: list_posts())}
+    else
+      removed = socket.assigns.removed_tweets
+      {:noreply, assign(socket, removed_tweets: [post.id | removed])}
+    end
   end
 
   def list_posts do

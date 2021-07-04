@@ -108,11 +108,9 @@ $shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
     width: 100%;
   }
 
-  textarea {
+  input {
     margin-block-start: 10px;
     border: none;
-    resize: none;
-    font-family: inherit;
     font-size: 2rem;
   }
   button {
@@ -185,4 +183,10 @@ button {
 
 .edited {
   color: gray;
+}
+
+.new_tweets {
+  margin-block-start: 20px;
+  display: flex;
+  justify-content: center;
 }

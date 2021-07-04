@@ -1,9 +1,9 @@
 <%= if @live_action in [:edit] do %>
   <%= live_modal @socket, TwitterWeb.PostLive.FormComponent,
-    id: @post.id,
+    id: @editable_post.id,
     title: @page_title,
     action: @live_action,
-    post: @post,
+    post: @editable_post,
     return_to: Routes.home_index_path(@socket, :index),
     current_user: @current_user
     %>
@@ -22,11 +22,13 @@
 <% end %>
 
 <%= if @should_refresh do %>
-  <button phx-click="refresh">Refresh</button>
+  <div class="new_tweets">
+    <button phx-click="refresh">New Tweets</button>
+  </div>
 <% end %>
 
-<div id="posts" phx-update="prepend">
+<div id="posts" phx-update="replace">
   <%= for post <- @posts do %>
-    <%= live_component @socket, TwitterWeb.PostLive.PostComponent, id: post.id, post: post, current_user: @current_user %>
+    <%= live_component @socket, TwitterWeb.PostLive.PostComponent, id: post.id, post: post, current_user: @current_user, was_removed: post.id in @removed_tweets %>
   <% end %>
 </div>

@@ -13,7 +13,7 @@
     <div class="avatar_container">
       <img class="avatar" src="<%= @current_user.image %>" alt="Loki" />
     </div>
-  <%= textarea f, :body, placeholder: "What's happening?" %>
+  <%= text_input f, :body, placeholder: "What's happening?", autocomplete: "off" %>
   </div>
   <%= error_tag f, :body %>
   <%= submit "Tweet", phx_disable_with: "Tweeting..." %>

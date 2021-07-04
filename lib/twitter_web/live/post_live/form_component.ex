@@ -2,6 +2,7 @@ defmodule TwitterWeb.PostLive.FormComponent do
   use TwitterWeb, :live_component
 
   alias Twitter.Timeline
+  alias Twitter.Timeline.Post
 
   @impl true
   def update(%{post: post} = assigns, socket) do
@@ -31,20 +32,22 @@ defmodule TwitterWeb.PostLive.FormComponent do
     case Timeline.update_post(socket.assigns.post, post_params) do
       {:ok, _post} ->
         {:noreply,
-         socket
-         |> put_flash(:info, "Post updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+        socket
+        |> put_flash(:info, "Post updated successfully")
+        |> push_redirect(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
-  end
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, assign(socket, :changeset, changeset)}
+        end
+      end
 
   defp save_post(socket, :new, post_params) do
+    IO.inspect(socket.assigns)
     case Timeline.create_post(post_params) do
       {:ok, _post} ->
         {:noreply,
          socket
+         |> assign(post: %Post{})
          |> put_flash(:info, "Post created successfully")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
